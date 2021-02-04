@@ -1,21 +1,18 @@
 package main
 
 import (
-	"github.com/gopherjs/gopherjs/js"
-	web3 "github.com/jaynagpaul/go-web3"
+	"fmt"
+	"log"
+
+	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-// gopherjs serve
-// Navigate to localhost:8080/jaynagpaul/go-web3/example
 func main() {
-	web3.NewWeb3().Version.GetNetwork(func(net string, err error) {
-		if err != nil {
-			println("Error:", err) // Log to console
-		}
-		println("Network Version:", net) // i.e Metamask/v3.9.7
-		js.Global.Call("alert", net)     // Alert net version
-	})
+	client, err := ethclient.Dial("wss://rinkeby.infura.io/ws")
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	//NOT WORKING
-
+	fmt.Println("we have a connection")
+	_ = client // we'll use this in the upcoming sections
 }
