@@ -17,7 +17,7 @@ const senderAdress = "0xf54af0421232CdE80124125c23D0c7DF6933Ea18"
 const receiverAdress = "0xbD89dFEBE2194a2c5a6456E238d713751187CedC"
 const senderPrivate = ""
 
-func main() {
+func main2() {
 	client := connect("https://rinkeby.infura.io/v3/67bba885733241c09e98ccb5e630bd2c")
 	getWallet(senderAdress, client)
 	send(senderAdress, receiverAdress, client)
