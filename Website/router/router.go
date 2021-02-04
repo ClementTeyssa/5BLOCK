@@ -1,7 +1,7 @@
-package main
+package router
 
 import (
-	"github.com/ClementTeyssa/5BLOCK/controllers"
+	"github.com/ClementTeyssa/5BLOCK/Website/controllers"
 	"github.com/gorilla/mux"
 )
 
