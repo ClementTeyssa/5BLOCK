@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	client, err := ethclient.Dial("wss://rinkeby.infura.io/ws")
+	client, err := ethclient.Dial("https://rinkeby.infura.io")
 	if err != nil {
 		log.Fatal(err)
 	}
