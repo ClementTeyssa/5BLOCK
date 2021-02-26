@@ -1,4 +1,4 @@
-pragma solidity ^0.5.16;
+pragma solidity ^0.8.0;
 
 contract ApprovalContract{
 
@@ -7,7 +7,7 @@ contract ApprovalContract{
     address public constant approver = 0x01941AAc796429E1206f94fA5ADD327EeCd0b770;
 
     function deposit(address payable _receiver) external payable {
-        require(msg.value > 0, "Vérifiez votre solde");
+        require(msg.value > 0, "Verifiez votre solde");
         sender = msg.sender;
         receiver = _receiver;
     }
@@ -17,7 +17,7 @@ contract ApprovalContract{
     }
 
     function approve() external{
-        require(msg.sender == approver,"La transaction a échoué");
+        require(msg.sender == approver,"La transaction a echoue");
         receiver.transfer(address(this).balance);
     }
 }
