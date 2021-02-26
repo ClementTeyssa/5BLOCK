@@ -7,6 +7,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 
 	approvalContract "5BLOCK/Smartcontract/build"
@@ -28,14 +29,8 @@ func main() {
 	_ = instance
 	address2 := common.HexToAddress("0xf54af0421232CdE80124125c23D0c7DF6933Ea18")
 	address3 := common.HexToAddress("0xbD89dFEBE2194a2c5a6456E238d713751187CedC")
-
-	depo, err := instance.Deposit(&bind.TransactOpts{
-		From:     address2,
-		Value:    big.NewInt(1000000000000000000),
-		GasPrice: big.NewInt(1000),
-		GasLimit: uint64(10000000000),
-		Context:  nil,
-	}, address3)
+	
+	depo, err := instance.Deposit({from: address2}, })
 	if err != nil {
 		log.Fatal(err)
 	}
