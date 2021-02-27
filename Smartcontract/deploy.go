@@ -11,7 +11,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 
-	approvalContract "5BLOCK/Smartcontract/build"
+	AD "5BLOCK/Smartcontract/build"
 )
 
 func main() {
@@ -49,7 +49,7 @@ func main() {
 	auth.GasPrice = gasPrice
 
 	//input := "1.0"
-	address, tx, instance, err := approvalContract.DeployApprovalContract(auth, client)
+	address, tx, instance, err := AD.DeployApprovalContract(auth, client)
 	if err != nil {
 		log.Fatal(err)
 	}
