@@ -6,7 +6,7 @@ import (
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("templates/index.html"))
+	tmpl := template.Must(template.ParseFiles("views/templates/index.html"))
 
 	// data := TodoPageData{
 	// 	PageTitle: "My TODO list",
