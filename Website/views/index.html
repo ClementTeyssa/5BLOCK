@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Jokeish App</title>
+  <title>Jokeish App 2</title>
   <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
   <script src="https://cdn.auth0.com/js/auth0/9.0/auth0.min.js"></script>
   <script type="application/javascript" src="https://unpkg.com/react@16.0.0/umd/react.production.min.js"></script>
@@ -15,12 +15,73 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/motion-ui/1.2.3/motion-ui.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/css/foundation-prototype.min.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css" rel="stylesheet" type="text/css">
+
+  
 </head>
 
 <body>
   <div id="app"></div>
 
-  <script type="text/javascript"> initMetamask() </script>
+  <form id="create-new-ad">
+    <input type="text" id="newAnnounceName"  placeholder="Enter the name of the announce" required="true">
+    <input type="text"  id="newAnnounceAddress"  placeholder="Enter the address of the announce" required="true">
+    <input type="number"  id="newAnnouncePrice"  placeholder="Enter the pourcent of the contract" required="true">
+    <button type="submit">Create the announce</button>
+  </form>
 </body>
 
+<script src="js/web3.min.js"></script>
+<script src="abis/Ad.js"></script>
+<script>
+
+  web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:9545"));
+
+  // Init the contract
+  var contractAddress = "0xB2B20b8778C86Cb3F55d8Cb2b531829Cd0399070";
+  var adContract = new web3.eth.Contract(Ad.abi, contractAddress);
+
+
+  $('#create-new-ad').submit(async function(){
+      event.preventDefault();
+      var newAnnounceName = $('#newAnnounceName').val();
+      var newAnnounceAddress = $('#newAnnounceAddress').val();
+      var newAnnouncePrice = $('#newAnnouncePrice').val();
+
+      if(newAnnounceName == null || newAnnounceName == ""){
+        alert('Not a valid announce name');
+        return
+      }
+
+      if(newAnnounceAddress == null || newAnnounceAddress == ""){
+        alert('Not a valid announce address');
+        return
+      }
+
+      if(newAnnouncePrice < 0){
+        alert("You must enter a positiv announce/'s price");
+        retrun
+      }
+
+      const result = await adContract.methods.mint(newAnnounceName,newAnnounceAddress,newAnnouncePrice)
+                  .send({
+                    from : "0x01941AAc796429E1206f94fA5ADD327EeCd0b770", // TODO: A changer avec l'addresse metamask
+                    gas: 3000000
+                  },
+                    async function(error, result) {
+                      if (error) {
+                        console.log('error: ' + error);
+                      }
+                      else {
+                        console.log('result: ' + JSON.stringify(result));
+                        alert("You're new contract is created !" + result)
+                      }
+                  });
+
+      const totalSupply = await adContract.methods.getNumberofAds().call()
+      
+      alert(totalSupply)
+  });
+
+
+</script>
 </html>
