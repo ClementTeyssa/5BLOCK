@@ -3,10 +3,63 @@ import Web3 from 'web3';
 import { Ad } from './../abis/Ad.js';
 import '../css/form.css';
 
+var web3
 
+function isMetamaskOK() {
+  if (window.ethereum) {
+    web3 = new Web3(window.ethereum);
+    try { 
+       window.ethereum.enable().then(function() {
+           // User has allowed account access to DApp...
+       });
+    } catch(e) {
+       // User has denied account access to DApp...
+       alert("please log on Metamask")
+       return false
+    }
+ }
+ // Legacy DApp Browsers
+ else if (window.web3) {
+     web3 = new Web3(window.web3.currentProvider);
+ }
+ // Non-DApp Browsers
+ else {
+     alert('You have to install MetaMask !');
+     return false
+ }
+  console.log(web3.currentProvider)
+  web3.eth.getAccounts(console.log);
+  return true
+}
 
+function getWeb3() {
+  if (window.ethereum) {
+    web3 = new Web3(window.ethereum);
+    try { 
+       window.ethereum.enable().then(function() {
+           // User has allowed account access to DApp...
+       });
+    } catch(e) {
+       // User has denied account access to DApp...
+       alert("please log on Metamask")
+       return undefined
+    }
+ }
+ // Legacy DApp Browsers
+ else if (window.web3) {
+     web3 = new Web3(window.web3.currentProvider);
+ }
+ // Non-DApp Browsers
+ else {
+     alert('You have to install MetaMask !');
+     return undefined
+ }
+  console.log(web3.currentProvider)
+  web3.eth.getAccounts(console.log);
+  return web3
+}
 
-export default class Home extends Component {
+class Form extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -48,7 +101,7 @@ export default class Home extends Component {
     console.log(Ad)
     const result = adContract.methods.mint(this.state.announceName,this.state.announceAddress,this.state.announcePrice)
                    .send({
-                     from : "0x01941AAc796429E1206f94fA5ADD327EeCd0b770", // TODO: A changer avec l'addresse metamask
+                     from : web3.eth.getAccounts()[0],
                      gas: 3000000
                   },
                      async function(error, result) {
@@ -68,8 +121,8 @@ export default class Home extends Component {
     alert('L announce à été crée : ' + this.state.announceAddress);
     event.preventDefault();
   }
-  
-  render() {
+
+  render () {
     return (
       <div class="callout large primary">
       <form id="create-new-ad" class="form-icons" onSubmit={this.handleSubmit}>
@@ -125,3 +178,38 @@ export default class Home extends Component {
     );
   }
 }
+
+class Adress extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+        adressETH : ""
+    };
+
+  }
+  account = web3.eth.getAccounts().then(function(result){this.state.adressETH = result[0];}) //FIXME: Afficher adresse ETH après chargement  
+  web3 = getWeb3();
+  render () { 
+    
+    return (
+      <div>
+      <div class="callout large primary">
+        <h4>Your ETH Adress is {this.state.adressETH}</h4>
+      </div>
+      <h2 class="type-sidelines"></h2>
+      </div>
+    );
+    }
+}
+
+export default class Home extends Component {
+  render() {    
+    return (
+      <div>
+      { isMetamaskOK() && <Adress/>}
+      <Form/>
+      </div>
+    );
+  }
+}
+
