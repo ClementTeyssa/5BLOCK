@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Web3 from 'web3';
 import { Ad } from './../abis/Ad.js';
+import '../css/form.css';
+
 
 
 
@@ -69,17 +71,57 @@ export default class Home extends Component {
   
   render() {
     return (
-        <form onSubmit={this.handleSubmit}>
-            <p>
+      <div class="callout large primary">
+      <form id="create-new-ad" class="form-icons" onSubmit={this.handleSubmit}>
+            <h4>Create an add</h4>
+          <p>
                 {this.state.message}
             </p>
-            <input type="text" value={this.state.announceName} placeholder="Enter the name of the announce" required={true}
-                onChange={this.handleAnnounceNameChange}
+          <div class="input-group">
+            <span class="input-group-label">
+              <i class="fa fa-user"></i>
+            </span>
+            <input
+              class="input-group-field"
+              type="text"
+              value={this.state.announceName}
+              id="newAnnounceName"
+              placeholder="Enter the name of the announce"
+              required={true}
+              onChange={this.handleAnnounceNameChange}
             />
-            <input type="text" value={this.state.announceAddress}   placeholder="Enter the address of the announce" required={true} onChange={this.handleAnnounceAddressChange}/>
-            <input type="number" value={this.state.announcePrice} placeholder="Enter the pourcent of the contract" required={true} onChange={this.handleAnnouncePriceChange}/>
-            <button type="submit">Create the announce</button>
+          </div>
+          <div class="input-group">
+            <span class="input-group-label">
+              <i class="fa fa-envelope"></i>
+            </span>
+            <input
+              class="input-group-field"
+              type="text"
+              value={this.state.announceAddress}
+              id="newAnnounceAddress"
+              placeholder="Enter the address of the announce"
+              required={true} onChange={this.handleAnnounceAddressChange}
+            />
+          </div>
+          <div class="input-group">
+            <span class="input-group-label">
+              <i class="fa fa-key"></i>
+            </span>
+            <input
+              class="input-group-field"
+              type="text"
+              value={this.state.announcePrice}
+              id="newAnnouncePrice"
+              placeholder="Enter the pourcent of the contract"
+              required={true} onChange={this.handleAnnouncePriceChange}
+            />
+          </div>
+          <button type="submit" class="button expanded">
+            Create the announce
+          </button>
         </form>
+      </div>
     );
   }
 }

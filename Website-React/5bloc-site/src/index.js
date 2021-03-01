@@ -1,8 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import './css/index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import './css/motion-ui.min.css'
+import './css/foundation-prototype.min.css'
+import './css/import.css'
 
 ReactDOM.render(
   <React.StrictMode>
