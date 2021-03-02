@@ -2,9 +2,66 @@ import React, { Component } from 'react';
 import Web3 from 'web3';
 import { Ad } from './../abis/Ad.js';
 import { Transaction } from 'ethereumjs-tx';
+import '../css/form.css';
 
-export default class Home extends Component {
-  constructor(props) {
+  var web3
+  
+  function isMetamaskOK() {
+    if (window.ethereum) {
+      web3 = new Web3(window.ethereum);
+      try { 
+         window.ethereum.enable().then(function() {
+             // User has allowed account access to DApp...
+         });
+      } catch(e) {
+         // User has denied account access to DApp...
+         alert("please log on Metamask")
+         return false
+      }
+   }
+   // Legacy DApp Browsers
+   else if (window.web3) {
+       web3 = new Web3(window.web3.currentProvider);
+   }
+   // Non-DApp Browsers
+   else {
+       alert('You have to install MetaMask !');
+       return false
+   }
+    console.log(web3.currentProvider)
+    web3.eth.getAccounts(console.log);
+    return true
+  }
+  
+  function getWeb3() {
+    if (window.ethereum) {
+      web3 = new Web3(window.ethereum);
+      try { 
+         window.ethereum.enable().then(function() {
+             // User has allowed account access to DApp...
+         });
+      } catch(e) {
+         // User has denied account access to DApp...
+         alert("please log on Metamask")
+         return undefined
+      }
+   }
+   // Legacy DApp Browsers
+   else if (window.web3) {
+       web3 = new Web3(window.web3.currentProvider);
+   }
+   // Non-DApp Browsers
+   else {
+       alert('You have to install MetaMask !');
+       return undefined
+   }
+    console.log(web3.currentProvider)
+    web3.eth.getAccounts(console.log);
+    return web3
+  }
+  
+  class Form extends Component {  
+    constructor(props) {
     super(props);
     this.state = {
         announceName : "",
@@ -76,7 +133,7 @@ export default class Home extends Component {
 
     const myAdMint = adContract.methods.mint(this.state.announceName,this.state.announceAddress,this.state.announcePrice).encodeABI();
 
-    web3.eth.getTransactionCount(account1, (err, txCount) => {
+    web3.eth.getTransactionCount(web3.eth.getAccounts()[0], (err, txCount) => {
       // Build the transaction
       if(err){
         console.log("Erreur transac :" +err)
@@ -94,7 +151,23 @@ export default class Home extends Component {
           const tx = new EthereumTx(txObject,{'chain':'rinkeby'});
           
           tx.sign(privateKey1);
+          console.log(Ad)
+          const result = adContract.methods.mint(this.state.announceName,this.state.announceAddress,this.state.announcePrice)
+                         .send({
+                           from : web3.eth.getAccounts()[0],
+                           gas: 3000000
+                        },
+                           async function(error, result) {
+                             if (error) {
+                               console.log('error: ' + error);
+                             }
+                             else {
+                               console.log('result: ' + JSON.stringify(result));
+                               alert("You're new contract is created !" + result)
+                             }
+                         });
       
+          // const totalSupply = await adContract.methods.getNumberofAds().call()
           const serializedTx = tx.serialize();
           const raw = '0x' + serializedTx.toString('hex');
       
@@ -128,27 +201,99 @@ export default class Home extends Component {
     //                });
 
     //this.setState({announcesNumber: () => await adContract.methods.getNumberofAds().call()});
-       const totalSupply = await adContract.methods.getNumberofAds().call();
+    const totalSupply = await adContract.methods.getNumberofAds().call();
 
-      this.setState({announcesNumber: "Votre annonce #" + totalSupply+ " \"" + this.state.announceName +"\" a bien été crée. \n "})
+    this.setState({announcesNumber: "Votre annonce #" + totalSupply+ " \"" + this.state.announceName +"\" a bien été crée. \n "})
     console.log("Total supp :" + totalSupply)
-    alert('L announce à été crée : ' + this.state.announceAddress);
   }
   
-  render() {
+  render () {
     return (
-        <form onSubmit={this.handleSubmit}>
-            <p>
+      <div class="callout large primary">
+      <form id="create-new-ad" class="form-icons" onSubmit={this.handleSubmit}>
+            <h4>Create an add</h4>
+          <p>
                 {this.state.message}
                 {this.state.announcesNumber}
             </p>
-            <input type="text" value={this.state.announceName} placeholder="Enter the name of the announce" required={true}
-                onChange={this.handleAnnounceNameChange}
+          <div class="input-group">
+            <span class="input-group-label">
+              <i class="fa fa-user"></i>
+            </span>
+            <input
+              class="input-group-field"
+              type="text"
+              value={this.state.announceName}
+              id="newAnnounceName"
+              placeholder="Enter the name of the announce"
+              required={true}
+              onChange={this.handleAnnounceNameChange}
             />
-            <input type="text" value={this.state.announceAddress}   placeholder="Enter the address of the announce" required={true} onChange={this.handleAnnounceAddressChange}/>
-            <input type="number" value={this.state.announcePrice} placeholder="Enter the pourcent of the contract" required={true} onChange={this.handleAnnouncePriceChange}/>
-            <button type="submit">Create the announce</button>
+          </div>
+          <div class="input-group">
+            <span class="input-group-label">
+              <i class="fa fa-envelope"></i>
+            </span>
+            <input
+              class="input-group-field"
+              type="text"
+              value={this.state.announceAddress}
+              id="newAnnounceAddress"
+              placeholder="Enter the address of the announce"
+              required={true} onChange={this.handleAnnounceAddressChange}
+            />
+          </div>
+          <div class="input-group">
+            <span class="input-group-label">
+              <i class="fa fa-key"></i>
+            </span>
+            <input
+              class="input-group-field"
+              type="text"
+              value={this.state.announcePrice}
+              id="newAnnouncePrice"
+              placeholder="Enter the pourcent of the contract"
+              required={true} onChange={this.handleAnnouncePriceChange}
+            />
+          </div>
+          <button type="submit" class="button expanded">
+            Create the announce
+          </button>   
         </form>
+      </div>
+    );
+  }
+}
+class Adress extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+        adressETH : ""
+    };
+
+  }
+  account = web3.eth.getAccounts().then(function(result){this.state.adressETH = result[0];}) //FIXME: Afficher adresse ETH après chargement  
+  web3 = getWeb3();
+  render () { 
+    
+    return (
+      <div>
+      <div class="callout large primary">
+        <h4>Your ETH Adress is {this.state.adressETH}</h4>
+      </div>
+      <h2 class="type-sidelines"></h2>
+      </div>
+    );
+    }
+}
+
+export default class Home extends Component {
+  render() {    
+    return (
+      <div>
+      { isMetamaskOK() && <Adress/>}
+      <Form/>
+      </div>
     );
   }
 }

@@ -1,5 +1,5 @@
-class FormNewAd extends React.Component {
-  render() {
+
+function newAdWeb3() {
     web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:9545"));
 
     // Init the contract
@@ -48,6 +48,10 @@ class FormNewAd extends React.Component {
 
       alert(totalSupply);
     });
+}
+class FormNewAd extends React.Component {
+  render() {
+    newAdWeb3()
     return (
       <div class="callout large primary">
         <form id="create-new-ad" class="form-icons">
