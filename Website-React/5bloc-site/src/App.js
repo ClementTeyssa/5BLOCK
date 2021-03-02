@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import Home from './components/Home';
+import AdList from './components/AdList';
 
 function App() {
   return (
@@ -19,7 +20,8 @@ function App() {
           Learn React
         </a>
       </header> */}
-      <Home/>
+      {/*<Home/>*/}
+      <AdList/>
     </div>
   );
 }
