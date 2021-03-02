@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/token/ERC721/IERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721Burnable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./access-control/Auth.sol";
 
 contract Ad is ERC721, ERC721Burnable, Ownable {
 
@@ -15,7 +14,9 @@ contract Ad is ERC721, ERC721Burnable, Ownable {
 
   mapping(uint256 => myAd) public ads;
 
-  uint8 commissionPercentage = 10;
+  address immutable private administrator;
+
+  uint8 private commissionPercentage = 10;
 
   struct myAd {
     address payable adCreator;
@@ -30,6 +31,11 @@ contract Ad is ERC721, ERC721Burnable, Ownable {
   }
 
   constructor() ERC721("Ad", "AD") {
+    administrator = msg.sender;
+  }
+
+  function isAdministrator(address _user) public view returns (bool) {
+    return _user == administrator;
   }
 
   //ad creation
@@ -67,6 +73,13 @@ contract Ad is ERC721, ERC721Burnable, Ownable {
     ads[_ad].adPrice = _adPrice;
   }
 
+  //deleting an ad
+  function deleteAd(uint256 _ad) external {
+    require(msg.sender == ownerOf(_ad), "You must be the owner of the ad");
+    burn(_ad);
+    delete(ads[_ad]);
+  }
+
   //"buying" the ad (performed when someone purchase)
   function buyAd(uint256 _ad) external payable {
     require(msg.sender != ownerOf(_ad), "You cannot purchase your own ad");
@@ -89,15 +102,15 @@ contract Ad is ERC721, ERC721Burnable, Ownable {
 
   //changing the comission took by the owner of the smart contract
   function changeComissionPercentage(uint8 _commissionPercentage) external onlyOwner {
+    require(isAdministrator(msg.sender), "You have to be the creator of the contract");
     require(_commissionPercentage >= 0 && _commissionPercentage <= 100, "Commission percentage must be between 0 and 100");
     commissionPercentage = _commissionPercentage;
   }
 
-  //deleting an ad
-  function deleteAd(uint256 _ad) external {
-    require(msg.sender == ownerOf(_ad), "You must be the owner of the ad");
-    burn(_ad);
-    delete(ads[_ad]);
+  function withdrawCommissions() external onlyOwner {
+    require(isAdministrator(msg.sender), "You have to be the creator of the contract");
+    require(balanceOf(address(this)) > 0, "There's no comissions to withdraw");
+    require(payable(msg.sender).send(balanceOf(address(this))));
   }
 
   function changeTokenOwnership(address _from, address _to, uint256 _tokenId) external payable {
@@ -105,7 +118,7 @@ contract Ad is ERC721, ERC721Burnable, Ownable {
     safeTransferFrom(_from, _to, _tokenId);
   }
 
-  function getNumberofAds() external view returns (uint256) {
+  function getNumberOfAds() external view returns (uint256) {
     return totalSupply();
   }
 
