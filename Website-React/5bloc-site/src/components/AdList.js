@@ -5,6 +5,7 @@ import '../css/adlist.css';
 import '../css/motion-ui.min.css'
 import '../css/foundation-prototype.min.css'
 import '../css/import.css'
+import { isMetamaskOK } from '../js/metamaskUtils.js';
 
 export default class AdList extends Component {
   constructor(props) {
@@ -128,6 +129,8 @@ export default class AdList extends Component {
 
   render() {
     return (
+      <div>
+        {isMetamaskOK() && this.state.userAddress != undefined && this.state.userAddress!= "" ?
       <table class="dashboard-table">
         <colgroup>
           <col width="300" />
@@ -210,6 +213,11 @@ export default class AdList extends Component {
         
         </tbody>
         </table>
-          )
+          
+          :
+          <p>Be connected to see more</p>
+      }
+      </div>
+    )
   }
 }

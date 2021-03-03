@@ -40,7 +40,7 @@ export default class Adress extends Component {
   render() {
     return (
       <div className="callout large primary">
-        { !isMetamaskOK() ?
+        { isMetamaskOK() ?
           <div>
             <h2>Your ETH Adress is {this.state.adressETH}</h2>
             <button className="button button-icon-badge" onClick={() => { this.handleWithdrawCommissions() }}>Withdraw commissions</button>

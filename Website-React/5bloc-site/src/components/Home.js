@@ -14,7 +14,7 @@ export default class Home extends Component {
       <div>
         <Adress/>
         <Form/>
-        {isMetamaskOK() && <AdList/>}
+        <AdList/>
       </div>
     );
   }
